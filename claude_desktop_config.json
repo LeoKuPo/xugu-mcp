@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "xugu": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/Users/sp/workspace/xugu/xugu-mcp",
+        "xugu-mcp"
+      ],
+      "env": {
+        "XUGU_DB_HOST": "127.0.0.1",
+        "XUGU_DB_PORT": "5138",
+        "XUGU_DB_DATABASE": "SYSTEM",
+        "XUGU_DB_USER": "SYSDBA",
+        "XUGU_DB_PASSWORD": "SYSDBA"
+      }
+    }
+  }
+}

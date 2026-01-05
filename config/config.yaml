@@ -1,0 +1,106 @@
+# XuguDB MCP Server Configuration
+#
+# This file contains default configuration for the XuguDB MCP server.
+# Settings can be overridden by environment variables (see .env.example).
+
+server:
+  name: "xugu-mcp-server"
+  version: "0.1.0"
+  log_level: "INFO"
+  host: "localhost"
+  port: 8000
+
+# XuguDB connection settings
+database:
+  host: "localhost"
+  port: 5138
+  database: "SYSTEM"
+  user: "SYSDBA"
+  password: ""  # Use XUGU_DB_PASSWORD env var in production
+  charset: "utf8"
+  usessl: "off"
+
+  # Connection pool settings
+  pool:
+    min_size: 2
+    max_size: 10
+    max_overflow: 5
+    timeout: 30  # seconds
+
+# LLM provider configuration
+llm:
+  # Provider: claude, openai, local
+  provider: "claude"
+
+  # Model settings
+  model: "claude-3-5-sonnet-20241022"
+  temperature: 0.0
+  max_tokens: 4096
+  timeout: 60  # seconds
+
+  # Provider-specific settings
+  claude:
+    api_key: ""  # Use LLM_API_KEY env var
+    api_url: "https://api.anthropic.com"
+
+  openai:
+    api_key: ""  # Use LLM_API_KEY env var
+    api_url: "https://api.openai.com/v1"
+    model: "gpt-4"
+
+  # zAI (Zhipu AI / 智谱 AI)
+  zai:
+    api_key: ""  # Use LLM_API_KEY env var
+    api_url: "https://open.bigmodel.cn/api/paas/v4/"  # Zhipu AI API
+    model: "glm-4"
+
+  local:
+    api_url: "http://localhost:11434"  # Ollama default
+    model: "llama2"
+
+# Chat2SQL settings
+chat2sql:
+  # Schema caching
+  enable_schema_cache: true
+  schema_cache_ttl: 3600  # seconds
+
+  # Few-shot examples
+  use_examples: true
+  max_examples: 3
+
+  # SQL validation
+  enable_validation: true
+  allow_ddl: true  # Allow DDL operations
+
+  # Query optimization
+  suggest_optimizations: true
+
+# Security settings
+security:
+  # Audit logging
+  enable_audit_log: true
+  audit_log_path: "./logs/audit.log"
+
+  # SQL restrictions (allowed operations)
+  allowed_operations:
+    - SELECT
+    - INSERT
+    - UPDATE
+    - DELETE
+    - CREATE
+    - ALTER
+    - DROP
+
+  # Blocked patterns
+  blocked_patterns:
+    - "DROP DATABASE"
+    - "ALTER SYSTEM"
+
+  # Rate limiting
+  rate_limit:
+    enabled: false
+    max_queries_per_minute: 100
+
+  # Query limits
+  max_query_execution_time: 300  # seconds
+  result_set_max_rows: 10000
