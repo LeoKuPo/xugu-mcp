@@ -1,0 +1,2 @@
+# Copy this to config.yaml and customize for your environment
+# The server will use environment variables if present, otherwise falls back to config.yaml

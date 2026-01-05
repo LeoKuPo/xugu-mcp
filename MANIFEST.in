@@ -1,0 +1,36 @@
+# Source distribution manifest
+
+include README.md
+include LICENSE
+include CHANGELOG.md
+include pyproject.toml
+include .env.example
+
+# Include all xgcondb platform-specific packages
+recursive-include xgcondb *.py *.so *.dll *.pyd
+recursive-include xgcondb-mac *.py *.so
+recursive-include xgcondb-linux-64 *.py *.so
+recursive-include xgcondb-linux-arm64 *.py *.so
+recursive-include xgcondb-win *.py *.so *.dll *.pyd
+
+# Include source code
+recursive-include src/xugu_mcp *.py
+
+# Exclude development and test artifacts
+exclude .gitignore
+exclude .DS_Store
+exclude *.pyc
+exclude __pycache__
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
+recursive-exclude * .git*
+recursive-exclude * .ruff_cache
+recursive-exclude * .venv
+recursive-exclude * *.egg-info
+recursive-exclude * .pytest_cache
+recursive-exclude * .mypy_cache
+recursive-exclude * .hypothesis
+recursive-exclude * *.egg
+recursive-exclude * build
+recursive-exclude * dist
