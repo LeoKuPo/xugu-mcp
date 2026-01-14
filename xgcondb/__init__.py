@@ -48,25 +48,45 @@ def _setup_shared_library_path(module_dir):
             else:
                 os.environ['LD_LIBRARY_PATH'] = lib_path
 
-            # On some systems, we also need to update the process's view of the library path
-            # This is done by re-initializing the dynamic linker
-            try:
-                import ctypes
-                # Try to preload the shared library
-                libxugusql_path = os.path.join(lib_path, 'libxugusql.so')
-                if os.path.exists(libxugusql_path):
-                    # Use RTLD_GLOBAL to make symbols available to subsequently loaded modules
-                    ctypes.CDLL(libxugusql_path, mode=ctypes.RTLD_GLOBAL)
-            except Exception:
-                # If preloading fails, continue anyway - it might still work
-                pass
+        # On some systems, we also need to update the process's view of the library path
+        # This is done by re-initializing the dynamic linker
+        try:
+            import ctypes
+            # Try to preload the shared library
+            libxugusql_path = os.path.join(lib_path, 'libxugusql.so')
+            if os.path.exists(libxugusql_path):
+                # Use RTLD_GLOBAL to make symbols available to subsequently loaded modules
+                ctypes.CDLL(libxugusql_path, mode=ctypes.RTLD_GLOBAL)
+        except Exception:
+            # If preloading fails, continue anyway - it might still work
+            pass
 
     elif system == "Windows":
-        # For Windows, ensure the DLL directory is in PATH
+        # For Windows, use os.add_dll_directory (Python 3.8+)
         dll_path = os.path.abspath(module_dir)
+
+        # Add to DLL search path using add_dll_directory (preferred method)
+        if hasattr(os, 'add_dll_directory'):
+            try:
+                os.add_dll_directory(dll_path)
+            except Exception:
+                pass
+
+        # Also add to PATH as fallback
         path_env = os.environ.get('PATH', '')
         if dll_path not in path_env.split(os.pathsep):
             os.environ['PATH'] = f"{dll_path}{os.pathsep}{path_env}"
+
+        # Preload xugusql.dll to make it available to subsequently loaded modules
+        try:
+            import ctypes
+            xugusql_path = os.path.join(dll_path, 'xugusql.dll')
+            if os.path.exists(xugusql_path):
+                # Use CDLL to preload the DLL
+                ctypes.CDLL(xugusql_path)
+        except Exception:
+            # If preloading fails, continue anyway - it might still work
+            pass
 
 
 def _get_platform_module():

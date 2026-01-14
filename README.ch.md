@@ -16,29 +16,195 @@
 
 ### 前置要求
 
-- Python 3.11+
+> **重要 Python 版本要求：** 本项目需要 **Python 3.6 至 3.11**（由于 XuguDB 驱动兼容性问题，目前不支持 Python 3.12+）。
+
+- **Python 3.6、3.7、3.8、3.9、3.10 或 3.11**（推荐 3.11）
 - XuguDB 数据库实例
 - （可选）用于 Chat2SQL 功能的 LLM API 密钥
 
-### 使用 uv 安装
+**如果你的 Python 版本不正确，请使用下面的自动设置脚本** - 它们会自动安装并配置正确的 Python 版本！
+
+### 快速设置（推荐）
+
+项目提供 **自动设置脚本**，可以自动检查和配置你的环境：
+
+#### Windows
+
+```powershell
+# 运行设置脚本
+.\scripts\setup.ps1
+```
+
+#### macOS / Linux
+
+```bash
+# 使脚本可执行（仅第一次）
+chmod +x scripts/setup.sh
+
+# 运行设置脚本
+./scripts/setup.sh
+```
+
+**设置脚本将：**
+- ✅ 检查 uv 是否已安装（如未安装则自动安装）
+- ✅ 检查 Python 3.11 是否可用（如未安装则通过 uv 自动安装）
+- ✅ 使用正确的 Python 版本创建虚拟环境
+- ✅ 安装所有依赖项
+- ✅ 验证安装
+
+**设置完成后：**
+```bash
+# 激活虚拟环境
+# Windows:
+.venv\Scripts\Activate.ps1
+
+# macOS/Linux:
+source .venv/bin/activate
+
+# 启动 MCP 服务器
+python main.py
+```
+
+---
+
+### Python 版本管理
+
+> **关键：** 本项目需要 **Python 3.6 至 3.11**。Python 3.12+ 不支持。
+
+**快速检查：**
+```bash
+python --version  # 应为 3.6-3.11
+```
+
+**如果你的 Python 版本不正确，使用自动设置：**
+
+```bash
+# 方式 1：pip 安装后 - 运行设置检查器
+xugu-mcp-setup
+
+# 方式 2：源码安装 - 运行设置脚本
+# Windows
+.\scripts\setup.ps1
+# macOS/Linux
+./scripts/setup.sh
+```
+
+**这些命令将：**
+- ✅ 检查并安装 uv（如需要）
+- ✅ 自动安装 Python 3.11
+- ✅ 设置虚拟环境
+- ✅ 安装所有依赖
+
+---
+
+**手动设置（高级）**
+
+如果你更喜欢手动设置，使用以下工具之一：
+
+| 工具 | 平台 | 命令 |
+|------|------|------|
+| **uv**（推荐） | 全部 | `uv python install 3.11` |
+| **pyenv** | macOS/Linux | `pyenv install 3.11.9 && pyenv local 3.11.9` |
+| **pyenv-win** | Windows | `pyenv install 3.11.9 && pyenv global 3.11.9` |
+| **conda** | 全部 | `conda create -n xugu-mcp python=3.11 && conda activate xugu-mcp` |
+
+**更多 Python 版本管理帮助：**
+- [uv 文档](https://github.com/astral-sh/uv)
+- [pyenv 文档](https://github.com/pyenv/pyenv)
+- [pyenv-win 文档](https://github.com/pyenv-win/pyenv-win)
+
+### 方式 1：从 PyPI 安装（推荐）
+
+```bash
+# 直接安装
+pip install xugu-mcp
+
+# 或使用 uv
+uv pip install xugu-mcp
+```
+
+**安装后，检查你的环境：**
+
+```bash
+# 一键环境检查和设置指南
+xugu-mcp-setup
+```
+
+`xugu-mcp-setup` 命令将：
+- ✅ 检查你的 Python 版本是否受支持（3.6-3.11）
+- ✅ 如果环境需要设置，提供逐步指引
+- ✅ 引导你安装 uv 和正确的 Python 版本
+
+**如果你的 Python 版本受支持，可以直接使用：**
+```bash
+# Stdio 模式
+xugu-mcp
+
+# HTTP/SSE 模式
+xugu-mcp-http
+```
+
+### 方式 2：从源码安装
 
 ```bash
 # 克隆仓库
-git clone <repository-url>
+git clone https://github.com/xugudb/xugu-mcp.git
 cd xugu-mcp
 
-# 安装依赖
-uv sync
-
-# 或以开发模式安装
-uv pip install -e ".[dev]"
+# 运行设置脚本（推荐）
+# Windows:
+.\scripts\setup.ps1
+# macOS/Linux:
+./scripts/setup.sh
 ```
 
-### 使用 pip 安装
+**设置脚本将：**
+- ✅ 检查并安装 uv（如需要）
+- ✅ 自动安装 Python 3.11
+- ✅ 创建虚拟环境
+- ✅ 安装所有依赖
+
+---
+
+**设置完成后：**
 
 ```bash
-pip install -e .
+# 激活虚拟环境
+# Windows:
+.venv\Scripts\Activate.ps1
+# macOS/Linux:
+source .venv/bin/activate
+
+# 启动 MCP 服务器
+uv run xugu-mcp
 ```
+
+**源码安装的 Claude Desktop 配置：**
+
+```json
+{
+  "mcpServers": {
+    "xugu": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "E:\\workspace\\xugu-mcp\\xugu-mcp",
+        "xugu-mcp"
+      ],
+      "env": {
+        "XUGU_DB_HOST": "your_database_host",
+        "XUGU_DB_PORT": "5138",
+        "XUGU_DB_DATABASE": "SYSTEM",
+        "XUGU_DB_USER": "SYSDBA",
+        "XUGU_DB_PASSWORD": "your_password"
+      }
+    }
+  }
+}
+```
+
+**注意：** 将 `--directory` 路径更新为你的实际项目位置。
 
 ## 配置
 
@@ -225,44 +391,41 @@ HTTP_SERVER_MESSAGE_ENDPOINT=/messages/  # 消息 POST 端点
 
 ### Claude Desktop 配置
 
-#### 选项 1：Stdio 模式（本地）
+**配置文件位置：**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-使用此配置进行 stdio 传输的本地开发：
-
-**位置：** `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+#### Stdio 模式（本地 - 推荐）
 
 ```json
 {
   "mcpServers": {
     "xugu": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/Users/sp/workspace/xugu/xugu-mcp",
-        "xugu-mcp"
-      ],
+      "command": "xugu-mcp",
       "env": {
-        "XUGU_DB_HOST": "10.147.20.226",
+        "XUGU_DB_HOST": "your_database_host",
         "XUGU_DB_PORT": "5138",
         "XUGU_DB_DATABASE": "SYSTEM",
         "XUGU_DB_USER": "SYSDBA",
-        "XUGU_DB_PASSWORD": "SYSDBA",
-        "LLM_API_KEY": "your_api_key_here"
+        "XUGU_DB_PASSWORD": "your_password"
       }
     }
   }
 }
 ```
 
-#### 选项 2：HTTP/SSE 模式（远程/网络）
+**源码安装**，将 `"command": "xugu-mcp"` 改为：
+```json
+"command": "uv",
+"args": ["run", "--directory", "/path/to/xugu-mcp", "xugu-mcp"]
+```
 
-使用此配置进行远程服务器或需要网络访问的场景：
+#### HTTP/SSE 模式（远程/网络）
 
 ```json
 {
   "mcpServers": {
-    "xugu-remote": {
+    "xugu": {
       "url": "http://127.0.0.1:8000/sse",
       "transport": "sse"
     }
@@ -270,37 +433,24 @@ HTTP_SERVER_MESSAGE_ENDPOINT=/messages/  # 消息 POST 端点
 }
 ```
 
-**注意：** 对于 HTTP 模式，在启动 Claude Desktop 之前确保 HTTP 服务器正在运行：
-
+**注意：** 启动 Claude Desktop 前先启动 HTTP 服务器：
 ```bash
-# 终端 1：启动 HTTP 服务器
-XUGU_DB_HOST=10.147.20.226 \
-XUGU_DB_PORT=5138 \
-XUGU_DB_DATABASE=SYSTEM \
-XUGU_DB_USER=SYSDBA \
-XUGU_DB_PASSWORD=SYSDBA \
-uv run xugu-mcp-http
-
-# 终端 2：启动 Claude Desktop（它将连接到运行中的服务器）
-open -a "Claude Desktop"
+XUGU_DB_HOST=your_host XUGU_DB_PASSWORD=your_password xugu-mcp-http
 ```
 
-#### 选项 3：同时运行两种模式
-
-你可以同时运行两种模式：
+#### 两种模式同时运行
 
 ```json
 {
   "mcpServers": {
     "xugu-local": {
-      "command": "uv",
-      "args": ["run", "--directory", "/Users/sp/workspace/xugu/xugu-mcp", "xugu-mcp"],
+      "command": "xugu-mcp",
       "env": {
-        "XUGU_DB_HOST": "10.147.20.226",
+        "XUGU_DB_HOST": "your_database_host",
         "XUGU_DB_PORT": "5138",
         "XUGU_DB_DATABASE": "SYSTEM",
         "XUGU_DB_USER": "SYSDBA",
-        "XUGU_DB_PASSWORD": "SYSDBA"
+        "XUGU_DB_PASSWORD": "your_password"
       }
     },
     "xugu-remote": {
@@ -318,46 +468,165 @@ open -a "Claude Desktop"
 #### 本地开发 (Stdio)
 
 ```bash
-# 1. 配置环境
-export XUGU_DB_HOST=10.147.20.226
-export XUGU_DB_PORT=5138
-export XUGU_DB_DATABASE=SYSTEM
-export XUGU_DB_USER=SYSDBA
-export XUGU_DB_PASSWORD=SYSDBA
+# 安装
+pip install xugu-mcp
 
-# 2. 启动服务器（stdio 模式）
-uv run xugu-mcp
+# 检查环境
+xugu-mcp-setup
 
-# 3. Claude Desktop 将自动连接
+# 启动服务器
+xugu-mcp
+
+# 源码安装使用: uv run xugu-mcp
 ```
 
 #### 远程服务器 (HTTP/SSE)
 
 ```bash
-# 1. 配置环境
-export XUGU_DB_HOST=10.147.20.226
+# 设置环境变量
+export XUGU_DB_HOST=your_host
+export XUGU_DB_PASSWORD=your_password
+export HTTP_SERVER_PORT=8000
+
+# 启动 HTTP 服务器
+xugu-mcp-http
+
+# 测试端点
+curl http://localhost:8000/sse
+
+# 源码安装使用: uv run xugu-mcp-http
+```
+
+### 测试与验证
+
+#### 验证安装
+
+```bash
+# 检查是否安装成功
+xugu-mcp --help  # 或
+xugu-mcp-http --help
+
+# 检查版本
+pip show xugu-mcp
+```
+
+#### 测试数据库连接
+
+```bash
+# 使用环境变量测试
+export XUGU_DB_HOST=your_database_host
 export XUGU_DB_PORT=5138
 export XUGU_DB_DATABASE=SYSTEM
 export XUGU_DB_USER=SYSDBA
-export XUGU_DB_PASSWORD=SYSDBA
-export HTTP_SERVER_HOST=0.0.0.0
-export HTTP_SERVER_PORT=8000
+export XUGU_DB_PASSWORD=your_password
 
-# 2. 启动 HTTP 服务器
-uv run xugu-mcp-http
+# Stdio 模式测试（应该启动并等待 MCP 消息）
+xugu-mcp
 
-# 3. 测试 SSE 端点
+# HTTP 模式测试
+xugu-mcp-http
+
+# 在另一个终端测试 HTTP 端点
 curl http://localhost:8000/sse
-
-# 预期响应：
-# event: endpoint
-# data: /messages/?session_id=<session_id>
-
-# 4. 配置 Claude Desktop 使用 HTTP URL
-# 参见上面的配置示例
 ```
 
+#### 在 Claude Desktop 中测试
+
+1. 配置 Claude Desktop（参见上面的配置示例）
+2. 重启 Claude Desktop
+3. 在 Claude 对话中尝试：
+   - "列出所有表"
+   - "显示表结构"
+   - "执行 SELECT 查询"
+
 ### 故障排查
+
+#### Python 版本问题
+
+**问题：Python 版本是 3.12+ 或不在 3.6-3.11 范围内**
+
+这是最常见的问题！XuguDB 驱动 (xgcondb) 仅支持 Python 3.6-3.11。
+
+**快速解决方案：**
+
+```bash
+# 方式 1：pip 安装后
+xugu-mcp-setup
+
+# 方式 2：源码安装
+./scripts/setup.sh  # Windows 使用 .\scripts\setup.ps1
+```
+
+**手动设置选项请参阅上方的 [Python 版本管理](#python-版本管理) 章节。**
+
+---
+
+#### 安装问题
+
+**问题：`pip install xugu-mcp` 失败**
+
+```bash
+# 尝试升级 pip
+pip install --upgrade pip
+
+# 使用 uv 安装（更快更可靠）
+pip install uv
+uv pip install xugu-mcp
+
+# 或从源码安装
+git clone https://github.com/xugudb/xugu-mcp.git
+cd xugu-mcp
+uv sync
+```
+
+**问题：找不到命令 `xugu-mcp`**
+
+```bash
+# 检查 Python scripts 路径是否在 PATH 中
+python -m site --user-base
+
+# 添加到 PATH（macOS/Linux）
+export PATH="$HOME/.local/bin:$PATH"
+
+# 或使用完整路径
+python -m xugu_mcp.main
+
+# 或使用 uv 运行
+uv run xugu-mcp
+```
+
+#### 连接问题
+
+**问题：无法连接到数据库**
+
+```bash
+# 检查数据库是否可达
+telnet your_database_host 5138
+
+# 检查防火墙设置
+# 确保 XuguDB 服务正在运行
+
+# 验证凭据
+export XUGU_DB_HOST=your_database_host
+export XUGU_DB_PORT=5138
+export XUGU_DB_DATABASE=SYSTEM
+export XUGU_DB_USER=SYSDBA
+export XUGU_DB_PASSWORD=your_password
+```
+
+**问题：Claude Desktop 无法连接 MCP 服务器**
+
+```bash
+# 检查 stdio 模式
+xugu-mcp
+
+# 检查 Claude Desktop 日志
+# macOS: ~/Library/Logs/Claude/
+# Windows: %APPDATA%\Claude\logs
+
+# 验证配置文件路径
+# macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
+```
 
 #### 端口已被占用
 
@@ -367,7 +636,7 @@ lsof -ti:8000 | xargs kill -9
 
 # 或使用不同的端口
 export HTTP_SERVER_PORT=8001
-uv run xugu-mcp-http
+xugu-mcp-http
 ```
 
 #### 连接被拒绝
@@ -384,14 +653,29 @@ curl http://localhost:8000/sse
 
 ```bash
 # 验证命令是否有效
-uv run xugu-mcp
+xugu-mcp
 
 # 检查 Python 版本（需要 3.11+）
 python --version
 
-# 如需要重新安装依赖
+# 如需要重新安装
+pip install --force-reinstall xugu-mcp
+
+# 或从源码重新安装
+git clone https://github.com/xugudb/xugu-mcp.git
+cd xugu-mcp
 uv sync
 ```
+
+#### 获取帮助
+
+如果问题仍未解决，请：
+1. 查看 [GitHub Issues](https://github.com/xugudb/xugu-mcp/issues)
+2. 提交新的 Issue，包含：
+   - 操作系统版本
+   - Python 版本
+   - 错误信息
+   - 配置文件内容（移除敏感信息）
 
 ## MCP 工具
 

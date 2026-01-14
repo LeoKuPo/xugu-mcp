@@ -4,8 +4,11 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/xugu-mcp)](https://pypi.org/project/xugu-mcp/)
 [![License](https://img.shields.io/pypi/l/xugu-mcp)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![中文文档](https://img.shields.io/badge/文档-中文-blue)](https://github.com/LeoKuPo/xugu-mcp/blob/main/README.ch.md)
 
 A Model Context Protocol (MCP) server for [XuguDB](https://docs.xugudb.com/content/development/python) (虚谷数据库) with full DDL/DML support, multi-LLM provider integration, and Chat2SQL (natural language to SQL) capabilities.
+
+> 📖 **中文文档** ([中文版](https://github.com/LeoKuPo/xugu-mcp/blob/main/README.ch.md)) | [English](https://github.com/LeoKuPo/xugu-mcp/blob/main/README.md)
 
 ## Features
 
@@ -21,29 +24,195 @@ A Model Context Protocol (MCP) server for [XuguDB](https://docs.xugudb.com/conte
 
 ### Prerequisites
 
-- Python 3.11+
+> **IMPORTANT Python Version Requirement:** This project requires **Python 3.6 through 3.11** (Python 3.12+ is NOT currently supported due to XuguDB driver compatibility).
+
+- **Python 3.6, 3.7, 3.8, 3.9, 3.10, or 3.11** (3.11 recommended)
 - XuguDB database instance
 - (Optional) LLM API key for Chat2SQL features
 
-### Install with uv
+**If your Python version is incorrect, use the automatic setup scripts below** - they will automatically install and configure the correct Python version for you!
+
+### Quick Setup (Recommended)
+
+The project provides **automatic setup scripts** that will check and configure your environment:
+
+#### Windows
+
+```powershell
+# Run the setup script
+.\scripts\setup.ps1
+```
+
+#### macOS / Linux
+
+```bash
+# Make script executable (first time only)
+chmod +x scripts/setup.sh
+
+# Run the setup script
+./scripts/setup.sh
+```
+
+**The setup script will:**
+- ✅ Check if uv is installed (install if missing)
+- ✅ Check if Python 3.11 is available (install via uv if missing)
+- ✅ Create virtual environment with correct Python version
+- ✅ Install all dependencies
+- ✅ Verify the installation
+
+**After setup completes:**
+```bash
+# Activate virtual environment
+# Windows:
+.venv\Scripts\Activate.ps1
+
+# macOS/Linux:
+source .venv/bin/activate
+
+# Start the MCP server
+python main.py
+```
+
+---
+
+### Python Version Management
+
+> **CRITICAL:** This project requires **Python 3.6 through 3.11**. Python 3.12+ is NOT supported.
+
+**Quick Check:**
+```bash
+python --version  # Should be 3.6-3.11
+```
+
+**If your Python version is incorrect, use our automatic setup:**
+
+```bash
+# Option 1: After pip install - Run the setup checker
+xugu-mcp-setup
+
+# Option 2: For source installation - Run the setup script
+# Windows
+.\scripts\setup.ps1
+# macOS/Linux
+./scripts/setup.sh
+```
+
+**These commands will:**
+- ✅ Check and install uv if needed
+- ✅ Install Python 3.11 automatically
+- ✅ Set up virtual environment
+- ✅ Install all dependencies
+
+---
+
+**Manual Setup (Advanced)**
+
+If you prefer manual setup, use one of these tools:
+
+| Tool | Platform | Commands |
+|------|----------|----------|
+| **uv** (Recommended) | All | `uv python install 3.11` |
+| **pyenv** | macOS/Linux | `pyenv install 3.11.9 && pyenv local 3.11.9` |
+| **pyenv-win** | Windows | `pyenv install 3.11.9 && pyenv global 3.11.9` |
+| **conda** | All | `conda create -n xugu-mcp python=3.11 && conda activate xugu-mcp` |
+
+**For more Python version management help:**
+- [uv documentation](https://github.com/astral-sh/uv)
+- [pyenv documentation](https://github.com/pyenv/pyenv)
+- [pyenv-win documentation](https://github.com/pyenv-win/pyenv-win)
+
+### Option 1: Install from PyPI (Recommended)
+
+```bash
+# Direct installation
+pip install xugu-mcp
+
+# Or using uv
+uv pip install xugu-mcp
+```
+
+**After installation, check your environment:**
+
+```bash
+# One-click environment check and setup guide
+xugu-mcp-setup
+```
+
+The `xugu-mcp-setup` command will:
+- ✅ Check if your Python version is supported (3.6-3.11)
+- ✅ Provide step-by-step instructions if your environment needs setup
+- ✅ Guide you through installing uv and the correct Python version
+
+**If your Python version is supported, you can use directly:**
+```bash
+# Stdio mode
+xugu-mcp
+
+# HTTP/SSE mode
+xugu-mcp-http
+```
+
+### Option 2: Install from Source
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/xugudb/xugu-mcp.git
 cd xugu-mcp
 
-# Install dependencies
-uv sync
-
-# Or install in development mode
-uv pip install -e ".[dev]"
+# Run the setup script (recommended)
+# Windows:
+.\scripts\setup.ps1
+# macOS/Linux:
+./scripts/setup.sh
 ```
 
-### Install with pip
+**The setup script will:**
+- ✅ Check and install uv if needed
+- ✅ Install Python 3.11 automatically
+- ✅ Create virtual environment
+- ✅ Install all dependencies
+
+---
+
+**After setup completes:**
 
 ```bash
-pip install -e .
+# Activate virtual environment
+# Windows:
+.venv\Scripts\Activate.ps1
+# macOS/Linux:
+source .venv/bin/activate
+
+# Start the MCP server
+uv run xugu-mcp
 ```
+
+**Claude Desktop Configuration for Source Installation:**
+
+```json
+{
+  "mcpServers": {
+    "xugu": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "E:\\workspace\\xugu-mcp\\xugu-mcp",
+        "xugu-mcp"
+      ],
+      "env": {
+        "XUGU_DB_HOST": "your_database_host",
+        "XUGU_DB_PORT": "5138",
+        "XUGU_DB_DATABASE": "SYSTEM",
+        "XUGU_DB_USER": "SYSDBA",
+        "XUGU_DB_PASSWORD": "your_password"
+      }
+    }
+  }
+}
+```
+
+**Note:** Update `--directory` path to your actual project location.
 
 ## Configuration
 
@@ -146,7 +315,10 @@ The XuguDB MCP Server supports **two transport modes** for different use cases:
 **Startup command:**
 
 ```bash
-# Using uv (recommended)
+# Using PyPI installed version (recommended)
+xugu-mcp
+
+# Or with uv (source installation)
 uv run xugu-mcp
 
 # Or directly with Python
@@ -181,7 +353,10 @@ export XUGU_DB_PASSWORD=your_password
 export HTTP_SERVER_HOST=0.0.0.0    # Listen on all interfaces
 export HTTP_SERVER_PORT=8000       # HTTP port
 
-# Start HTTP server
+# Start HTTP server (PyPI installed version)
+xugu-mcp-http
+
+# Or with uv (source installation)
 uv run xugu-mcp-http
 
 # Or directly with Python
@@ -219,7 +394,7 @@ HTTP_SERVER_MESSAGE_ENDPOINT=/messages/  # Message POST endpoint
 |---------|------------|---------------|
 | **Transport** | Standard I/O | HTTP (SSE) |
 | **Use Case** | Local development | Remote/network access |
-| **Command** | `uv run xugu-mcp` | `uv run xugu-mcp-http` |
+| **Command** | `xugu-mcp` | `xugu-mcp-http` |
 | **Port Required** | No | Yes (default: 8000) |
 | **Remote Access** | No | Yes |
 | **Multiple Clients** | No | Yes |
@@ -230,44 +405,41 @@ HTTP_SERVER_MESSAGE_ENDPOINT=/messages/  # Message POST endpoint
 
 ### Claude Desktop Configuration
 
-#### Option 1: Stdio Mode (Local)
+**Config Location:**
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-Use this for local development with stdio transport:
-
-**Location:** `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+#### Stdio Mode (Local - Recommended)
 
 ```json
 {
   "mcpServers": {
     "xugu": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/Users/sp/workspace/xugu/xugu-mcp",
-        "xugu-mcp"
-      ],
+      "command": "xugu-mcp",
       "env": {
-        "XUGU_DB_HOST": "10.147.20.226",
+        "XUGU_DB_HOST": "your_database_host",
         "XUGU_DB_PORT": "5138",
         "XUGU_DB_DATABASE": "SYSTEM",
         "XUGU_DB_USER": "SYSDBA",
-        "XUGU_DB_PASSWORD": "SYSDBA",
-        "LLM_API_KEY": "your_api_key_here"
+        "XUGU_DB_PASSWORD": "your_password"
       }
     }
   }
 }
 ```
 
-#### Option 2: HTTP/SSE Mode (Remote/Network)
+**For source installation**, change `"command": "xugu-mcp"` to:
+```json
+"command": "uv",
+"args": ["run", "--directory", "/path/to/xugu-mcp", "xugu-mcp"]
+```
 
-Use this for remote server or when you need network access:
+#### HTTP/SSE Mode (Remote/Network)
 
 ```json
 {
   "mcpServers": {
-    "xugu-remote": {
+    "xugu": {
       "url": "http://127.0.0.1:8000/sse",
       "transport": "sse"
     }
@@ -275,37 +447,24 @@ Use this for remote server or when you need network access:
 }
 ```
 
-**Note:** For HTTP mode, make sure the HTTP server is running before starting Claude Desktop:
-
+**Note:** Start the HTTP server before launching Claude Desktop:
 ```bash
-# Terminal 1: Start HTTP server
-XUGU_DB_HOST=10.147.20.226 \
-XUGU_DB_PORT=5138 \
-XUGU_DB_DATABASE=SYSTEM \
-XUGU_DB_USER=SYSDBA \
-XUGU_DB_PASSWORD=SYSDBA \
-uv run xugu-mcp-http
-
-# Terminal 2: Start Claude Desktop (it will connect to the running server)
-open -a "Claude Desktop"
+XUGU_DB_HOST=your_host XUGU_DB_PASSWORD=your_password xugu-mcp-http
 ```
 
-#### Option 3: Both Modes Simultaneously
-
-You can run both modes at the same time:
+#### Both Modes
 
 ```json
 {
   "mcpServers": {
     "xugu-local": {
-      "command": "uv",
-      "args": ["run", "--directory", "/Users/sp/workspace/xugu/xugu-mcp", "xugu-mcp"],
+      "command": "xugu-mcp",
       "env": {
-        "XUGU_DB_HOST": "10.147.20.226",
+        "XUGU_DB_HOST": "your_database_host",
         "XUGU_DB_PORT": "5138",
         "XUGU_DB_DATABASE": "SYSTEM",
         "XUGU_DB_USER": "SYSDBA",
-        "XUGU_DB_PASSWORD": "SYSDBA"
+        "XUGU_DB_PASSWORD": "your_password"
       }
     },
     "xugu-remote": {
@@ -323,46 +482,165 @@ You can run both modes at the same time:
 #### Local Development (Stdio)
 
 ```bash
-# 1. Configure environment
-export XUGU_DB_HOST=10.147.20.226
-export XUGU_DB_PORT=5138
-export XUGU_DB_DATABASE=SYSTEM
-export XUGU_DB_USER=SYSDBA
-export XUGU_DB_PASSWORD=SYSDBA
+# Install
+pip install xugu-mcp
 
-# 2. Start server (stdio mode)
-uv run xugu-mcp
+# Check environment
+xugu-mcp-setup
 
-# 3. Claude Desktop will automatically connect
+# Start server
+xugu-mcp
+
+# For source installation, use: uv run xugu-mcp
 ```
 
 #### Remote Server (HTTP/SSE)
 
 ```bash
-# 1. Configure environment
-export XUGU_DB_HOST=10.147.20.226
+# Set environment variables
+export XUGU_DB_HOST=your_host
+export XUGU_DB_PASSWORD=your_password
+export HTTP_SERVER_PORT=8000
+
+# Start HTTP server
+xugu-mcp-http
+
+# Test endpoint
+curl http://localhost:8000/sse
+
+# For source installation, use: uv run xugu-mcp-http
+```
+
+### Testing & Verification
+
+#### Verify Installation
+
+```bash
+# Check if installation was successful
+xugu-mcp --help  # or
+xugu-mcp-http --help
+
+# Check version
+pip show xugu-mcp
+```
+
+#### Test Database Connection
+
+```bash
+# Test using environment variables
+export XUGU_DB_HOST=your_database_host
 export XUGU_DB_PORT=5138
 export XUGU_DB_DATABASE=SYSTEM
 export XUGU_DB_USER=SYSDBA
-export XUGU_DB_PASSWORD=SYSDBA
-export HTTP_SERVER_HOST=0.0.0.0
-export HTTP_SERVER_PORT=8000
+export XUGU_DB_PASSWORD=your_password
 
-# 2. Start HTTP server
-uv run xugu-mcp-http
+# Stdio mode test (should start and wait for MCP messages)
+xugu-mcp
 
-# 3. Test SSE endpoint
+# HTTP mode test
+xugu-mcp-http
+
+# In another terminal, test HTTP endpoint
 curl http://localhost:8000/sse
-
-# Expected response:
-# event: endpoint
-# data: /messages/?session_id=<session_id>
-
-# 4. Configure Claude Desktop to use HTTP URL
-# See configuration examples above
 ```
 
+#### Test in Claude Desktop
+
+1. Configure Claude Desktop (see configuration examples above)
+2. Restart Claude Desktop
+3. Try in Claude conversation:
+   - "List all tables"
+   - "Show table structure"
+   - "Execute a SELECT query"
+
 ### Troubleshooting
+
+#### Python Version Issues
+
+**Problem: Python version is 3.12+ or not in the 3.6-3.11 range**
+
+This is the most common issue! XuguDB driver (xgcondb) only supports Python 3.6-3.11.
+
+**Quick Solutions:**
+
+```bash
+# Option 1: After pip install
+xugu-mcp-setup
+
+# Option 2: For source installation
+./scripts/setup.sh  # or .\scripts\setup.ps1 on Windows
+```
+
+**For manual setup options, see [Python Version Management](#python-version-management) above.**
+
+---
+
+#### Installation Issues
+
+**Problem: `pip install xugu-mcp` fails**
+
+```bash
+# Try upgrading pip
+pip install --upgrade pip
+
+# Use uv for installation (faster and more reliable)
+pip install uv
+uv pip install xugu-mcp
+
+# Or install from source
+git clone https://github.com/xugudb/xugu-mcp.git
+cd xugu-mcp
+uv sync
+```
+
+**Problem: Command `xugu-mcp` not found**
+
+```bash
+# Check if Python scripts path is in PATH
+python -m site --user-base
+
+# Add to PATH (macOS/Linux)
+export PATH="$HOME/.local/bin:$PATH"
+
+# Or use full path
+python -m xugu_mcp.main
+
+# Or use uv to run
+uv run xugu-mcp
+```
+
+#### Connection Issues
+
+**Problem: Cannot connect to database**
+
+```bash
+# Check if database is reachable
+telnet your_database_host 5138
+
+# Check firewall settings
+# Ensure XuguDB service is running
+
+# Verify credentials
+export XUGU_DB_HOST=your_database_host
+export XUGU_DB_PORT=5138
+export XUGU_DB_DATABASE=SYSTEM
+export XUGU_DB_USER=SYSDBA
+export XUGU_DB_PASSWORD=your_password
+```
+
+**Problem: Claude Desktop cannot connect to MCP server**
+
+```bash
+# Check stdio mode
+xugu-mcp
+
+# Check Claude Desktop logs
+# macOS: ~/Library/Logs/Claude/
+# Windows: %APPDATA%\Claude\logs
+
+# Verify config file path
+# macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
+```
 
 #### Port Already in Use
 
@@ -372,7 +650,7 @@ lsof -ti:8000 | xargs kill -9
 
 # Or use a different port
 export HTTP_SERVER_PORT=8001
-uv run xugu-mcp-http
+xugu-mcp-http
 ```
 
 #### Connection Refused
@@ -389,14 +667,29 @@ curl http://localhost:8000/sse
 
 ```bash
 # Verify the command works
-uv run xugu-mcp
+xugu-mcp
 
 # Check Python version (requires 3.11+)
 python --version
 
-# Reinstall dependencies if needed
+# Reinstall if needed
+pip install --force-reinstall xugu-mcp
+
+# Or reinstall from source
+git clone https://github.com/xugudb/xugu-mcp.git
+cd xugu-mcp
 uv sync
 ```
+
+#### Getting Help
+
+If issues persist, please:
+1. Check [GitHub Issues](https://github.com/xugudb/xugu-mcp/issues)
+2. Submit a new issue with:
+   - Operating system version
+   - Python version
+   - Error messages
+   - Configuration file contents (with sensitive info removed)
 
 ## MCP Tools
 

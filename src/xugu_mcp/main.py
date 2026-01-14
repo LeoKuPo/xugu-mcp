@@ -24,6 +24,7 @@ from .db import operations
 from .mcp_resources import schema_resources
 from .utils.logging import get_mcp_logger
 from .utils.errors import QueryExecutionError
+from .utils.env_check import check_environment, get_env_warning_for_llm
 
 # Import tool modules for MCP tool implementations
 import xugu_mcp.mcp_tools.schema_tools as schema_tools
@@ -40,6 +41,9 @@ logger = mcp_logger.get_logger(__name__)
 
 # Get settings
 settings = get_settings()
+
+# Track if environment warning has been shown to LLM
+_env_warning_shown = False
 
 # Create MCP server instance
 server = Server(
@@ -1065,16 +1069,31 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     This is the ONLY handler registered with @server.call_tool().
     It dispatches to the appropriate tool handler based on the tool name.
     """
+    global _env_warning_shown
+
+    # Show environment warning to LLM on first tool call if there are issues
+    env_warning_msg = None
+    if not _env_warning_shown:
+        env_warning_msg = get_env_warning_for_llm()
+        _env_warning_shown = True
+
     if name not in TOOL_HANDLERS:
         logger.error(f"Unknown tool: {name}")
-        return [TextContent(type="text", text=f"Error: Unknown tool '{name}'")]
+        response = [TextContent(type="text", text=f"Error: Unknown tool '{name}'")]
+    else:
+        try:
+            handler = TOOL_HANDLERS[name]
+            response = await handler(arguments)
+        except Exception as e:
+            logger.error(f"Tool {name} execution failed: {e}")
+            response = [TextContent(type="text", text=f"Error: {str(e)}")]
 
-    try:
-        handler = TOOL_HANDLERS[name]
-        return await handler(arguments)
-    except Exception as e:
-        logger.error(f"Tool {name} execution failed: {e}")
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
+    # Prepend environment warning if this is the first call and there are issues
+    if env_warning_msg:
+        warning_content = TextContent(type="text", text=env_warning_msg)
+        return [warning_content, *response]
+
+    return response
 
 
 # =============================================================================
@@ -1264,6 +1283,17 @@ async def main():
     """Main entry point for the MCP server."""
     logger.info(f"Starting {settings.mcp_server.name} v{settings.mcp_server.version}")
     logger.info(f"XuguDB connection: {settings.xugu.host}:{settings.xugu.port}/{settings.xugu.database}")
+
+    # Environment check (output to user via stderr)
+    env_result = check_environment()
+    if env_result.errors:
+        logger.error("Environment errors detected:")
+        for error in env_result.errors:
+            logger.error(f"  - {error}")
+    if env_result.warnings:
+        logger.warning("Environment warnings:")
+        for warning in env_result.warnings:
+            logger.warning(f"  - {warning}")
 
     # Test database connection
     try:

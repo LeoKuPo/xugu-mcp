@@ -1,15 +1,15 @@
 [project]
 name = "xugu-mcp"
-version = "0.1.0"
+version = "0.2.2"
 description = "XuguDB MCP Server with Chat2SQL support - A Model Context Protocol server for XuguDB (虚谷数据库) with full DDL/DML support, multi-LLM provider integration, and natural language to SQL conversion capabilities."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.6,<3.12"
 license = { text = "MIT" }
 authors = [
-    { name = "XuguDB Community", email = "info@xugudb.com" }
+    { name = "Leo", email = "prolokair@gmail.com" }
 ]
 maintainers = [
-    { name = "XuguDB Community", email = "info@xugudb.com" }
+    { name = "Leo", email = "prolokair@gmail.com" }
 ]
 keywords = [
     "mcp",
@@ -34,8 +34,12 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
     "Typing :: Typed",
 ]
@@ -56,11 +60,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/xugudb/xugu-mcp"
-Documentation = "https://github.com/xugudb/xugu-mcp#readme"
-Repository = "https://github.com/xugudb/xugu-mcp"
-Issues = "https://github.com/xugudb/xugu-mcp/issues"
-Changelog = "https://github.com/xugudb/xugu-mcp/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/LeoKuPo/xugu-mcp"
+Documentation = "https://github.com/LeoKuPo/xugu-mcp/blob/main/README.ch.md"
+Repository = "https://github.com/LeoKuPo/xugu-mcp.git"
+Issues = "https://github.com/LeoKuPo/xugu-mcp/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -75,6 +78,7 @@ dev = [
 [project.scripts]
 xugu-mcp = "xugu_mcp.main:cli_main"
 xugu-mcp-http = "xugu_mcp.http_server:main"
+xugu-mcp-setup = "xugu_mcp.setup_installer:cli_main"
 
 [build-system]
 requires = ["hatchling"]
@@ -82,14 +86,14 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py36"
 
 [tool.black]
 line-length = 100
-target-version = ["py311"]
+target-version = ["py36", "py37", "py38", "py39", "py310", "py311"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.6"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false

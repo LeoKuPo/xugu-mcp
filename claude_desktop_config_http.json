@@ -1,4 +1,5 @@
 {
+  "_comment": "HTTP/SSE 模式配置 - 需要先启动 xugu-mcp-http 服务器",
   "mcpServers": {
     "xugu-http": {
       "url": "http://127.0.0.1:8000/sse",

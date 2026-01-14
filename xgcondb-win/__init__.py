@@ -6,39 +6,49 @@ os_name = platform.system()
 if os_name == "Windows":
     if sys.version_info.major == 3:
         if minor == 4:
-            from xgcondb._pyxgdb34 import _connect as _connect
-            from xgcondb._pyxgdb34 import version as version
+            from ._pyxgdb34 import _connect as _connect
+            from ._pyxgdb34 import version as version
 
         elif minor == 6:
-            from xgcondb._pyxgdb36 import _connect as _connect
-            from xgcondb._pyxgdb36 import version as version
+            from ._pyxgdb36 import _connect as _connect
+            from ._pyxgdb36 import version as version
 
         elif minor == 7:
-            from xgcondb._pyxgdb37 import _connect as _connect
-            from xgcondb._pyxgdb37 import version as version
+            from ._pyxgdb37 import _connect as _connect
+            from ._pyxgdb37 import version as version
 
         elif minor == 8:
-            from xgcondb._pyxgdb38 import _connect as _connect
-            from xgcondb._pyxgdb38 import version as version
-        
+            from ._pyxgdb38 import _connect as _connect
+            from ._pyxgdb38 import version as version
+
         elif minor == 9:
-            from xgcondb._pyxgdb39 import _connect as _connect
-            from xgcondb._pyxgdb39 import version as version
-            
+            from ._pyxgdb39 import _connect as _connect
+            from ._pyxgdb39 import version as version
+
         elif minor == 10:
-            from xgcondb._pyxgdb310 import _connect as _connect
-            from xgcondb._pyxgdb310 import version as version
-            
+            from ._pyxgdb310 import _connect as _connect
+            from ._pyxgdb310 import version as version
+
         elif minor == 11:
-            from xgcondb._pyxgdb311 import _connect as _connect
-            from xgcondb._pyxgdb311 import version as version
+            from ._pyxgdb311 import _connect as _connect
+            from ._pyxgdb311 import version as version
+
+        elif minor == 12:
+            # Python 3.12 uses 3.11 ABI compatible .pyd
+            from ._pyxgdb311 import _connect as _connect
+            from ._pyxgdb311 import version as version
+
+        elif minor >= 13:
+            # Python 3.13+ uses 3.11 ABI compatible .pyd
+            from ._pyxgdb311 import _connect as _connect
+            from ._pyxgdb311 import version as version
 
         else:
             print("ERROR:当前python版本不支持，请联系虚谷数据库客服人员")
     elif sys.version_info.major == 2:
         if minor == 7:
-            from xgcondb._pyxgdb import _connect as _connect
-            from xgcondb._pyxgdb import version as version
+            from ._pyxgdb import _connect as _connect
+            from ._pyxgdb import version as version
 
         else:
             print("ERROR:当前python版本不支持，请联系虚谷数据库客服人员")
